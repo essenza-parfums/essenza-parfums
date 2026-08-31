@@ -24,4 +24,111 @@ let products=JSON.parse(localStorage.getItem("essenza_products")||"null")||defau
 let phone="40741453793";
 function render(){document.getElementById("productGrid").innerHTML=products.map((p,i)=>`<article class="card"><div class="pic">${p.img?`<img src="${p.img}" alt="${p.name}">`:`<div class="placeholder">ESSENZA</div>`}</div><div class="body"><span class="badge">${p.badge||p.cat}</span><h3>${p.name}</h3><small>${p.cat}</small><div class="price">${p.old?`<span class="old">${Number(p.old).toFixed(2)} lei</span>`:""}${Number(p.price).toFixed(2)} lei</div><a class="btn buy" target="_blank" href="https://wa.me/${phone}?text=${encodeURIComponent("Bună! Vreau să comand: "+p.name+" — "+Number(p.price).toFixed(2)+" lei.")}">COMANDĂ ACUM</a></div></article>`).join("");document.getElementById("wa").href=`https://wa.me/${phone}?text=${encodeURIComponent("Bună! Vreau să comand un parfum.")}`;document.getElementById("contactPhone").textContent=phone.replace(/^40/,"0").replace(/(\d{4})(\d{3})(\d{3})/,"$1 $2 $3")}
 render();
-</script></body></html>
+</script>
+
+<section id="comanda" style="padding:35px 6%;background:#fff;">
+  <div style="max-width:600px;margin:auto;">
+    <h2 style="text-align:center;">Comandă parfumul</h2>
+    <p style="text-align:center;">Completează datele de livrare</p>
+
+    <form id="orderForm">
+
+      <label>Nume și prenume</label>
+      <input id="clientName" required
+        style="width:100%;padding:13px;margin:6px 0 15px;border:1px solid #ccc;border-radius:8px;"
+        placeholder="Numele tău">
+
+      <label>Telefon</label>
+      <input id="clientPhone" type="tel" required
+        style="width:100%;padding:13px;margin:6px 0 15px;border:1px solid #ccc;border-radius:8px;"
+        placeholder="07xxxxxxxx">
+
+      <label>Produs</label>
+      <select id="productSelect" required
+        style="width:100%;padding:13px;margin:6px 0 15px;border:1px solid #ccc;border-radius:8px;">
+        <option value="">Alege parfumul</option>
+      </select>
+
+      <label>Cantitate</label>
+      <input id="quantity" type="number" min="1" value="1" required
+        style="width:100%;padding:13px;margin:6px 0 15px;border:1px solid #ccc;border-radius:8px;">
+
+      <label>Județ</label>
+      <input id="county" required
+        style="width:100%;padding:13px;margin:6px 0 15px;border:1px solid #ccc;border-radius:8px;"
+        placeholder="Ex: Ilfov">
+
+      <label>Localitate</label>
+      <input id="city" required
+        style="width:100%;padding:13px;margin:6px 0 15px;border:1px solid #ccc;border-radius:8px;"
+        placeholder="Ex: București">
+
+      <label>Adresă completă</label>
+      <textarea id="address" required
+        style="width:100%;padding:13px;margin:6px 0 15px;border:1px solid #ccc;border-radius:8px;"
+        placeholder="Stradă, număr, bloc, scară, apartament"></textarea>
+
+      <label>Observații</label>
+      <textarea id="notes"
+        style="width:100%;padding:13px;margin:6px 0 20px;border:1px solid #ccc;border-radius:8px;"
+        placeholder="Detalii pentru livrare (opțional)"></textarea>
+
+      <button type="submit"
+        style="width:100%;padding:16px;background:#25D366;color:white;border:0;border-radius:9px;font-size:17px;font-weight:bold;">
+        🟢 TRIMITE COMANDA PE WHATSAPP
+      </button>
+
+    </form>
+  </div>
+</section>
+
+<script>
+const productSelect = document.getElementById("productSelect");
+
+products.forEach((p,i)=>{
+  const option = document.createElement("option");
+  option.value = i;
+  option.textContent = p.name + " - " + p.price + " lei";
+  productSelect.appendChild(option);
+});
+
+document.getElementById("orderForm").addEventListener("submit",function(e){
+  e.preventDefault();
+
+  const p = products[Number(productSelect.value)];
+  const qty = Number(document.getElementById("quantity").value);
+
+  const name = document.getElementById("clientName").value;
+  const phone = document.getElementById("clientPhone").value;
+  const county = document.getElementById("county").value;
+  const city = document.getElementById("city").value;
+  const address = document.getElementById("address").value;
+  const notes = document.getElementById("notes").value;
+
+  const total = p.price * qty;
+
+  const message =
+`🛍️ COMANDĂ NOUĂ - ESSENZA PARFUMS
+
+👤 Nume: ${name}
+📞 Telefon: ${phone}
+
+🌸 Produs: ${p.name}
+📦 Cantitate: ${qty}
+💰 Total: ${total.toFixed(2)} lei
+
+📍 Județ: ${county}
+🏙️ Localitate: ${city}
+🏠 Adresă: ${address}
+
+📝 Observații: ${notes || "Nicio observație"}`;
+
+  window.open(
+    "https://wa.me/" + phone.replace(/\\D/g,"") +
+    "?text=" + encodeURIComponent(message),
+    "_blank"
+  );
+});
+</script>
+
+</body></html>
