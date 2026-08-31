@@ -85,25 +85,31 @@ render();
 <script>
 const productSelect = document.getElementById("productSelect");
 
-products.forEach((p,i)=>{
+products.forEach((p, i) => {
   const option = document.createElement("option");
   option.value = i;
-  option.textContent = p.name + " - " + p.price + " lei";
+  option.textContent = p.name + " - " + p.price.toFixed(2) + " lei";
   productSelect.appendChild(option);
 });
 
-document.getElementById("orderForm").addEventListener("submit",function(e){
+document.getElementById("orderForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const p = products[Number(productSelect.value)];
+
+  if (!p) {
+    alert("Te rugăm să alegi un parfum.");
+    return;
+  }
+
   const qty = Number(document.getElementById("quantity").value);
 
-  const name = document.getElementById("clientName").value;
-  const phone = document.getElementById("clientPhone").value;
-  const county = document.getElementById("county").value;
-  const city = document.getElementById("city").value;
-  const address = document.getElementById("address").value;
-  const notes = document.getElementById("notes").value;
+  const name = document.getElementById("clientName").value.trim();
+  const clientPhone = document.getElementById("clientPhone").value.trim();
+  const county = document.getElementById("county").value.trim();
+  const city = document.getElementById("city").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const notes = document.getElementById("notes").value.trim();
 
   const total = p.price * qty;
 
@@ -111,7 +117,7 @@ document.getElementById("orderForm").addEventListener("submit",function(e){
 `🛍️ COMANDĂ NOUĂ - ESSENZA PARFUMS
 
 👤 Nume: ${name}
-📞 Telefon: ${phone}
+📞 Telefon: ${clientPhone}
 
 🌸 Produs: ${p.name}
 📦 Cantitate: ${qty}
@@ -123,9 +129,11 @@ document.getElementById("orderForm").addEventListener("submit",function(e){
 
 📝 Observații: ${notes || "Nicio observație"}`;
 
+  // Numărul TĂU de WhatsApp
+  const whatsappNumber = "40741453793";
+
   window.open(
-    "https://wa.me/" + phone.replace(/\\D/g,"") +
-    "?text=" + encodeURIComponent(message),
+    "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(message),
     "_blank"
   );
 });
